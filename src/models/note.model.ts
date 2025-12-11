@@ -3,5 +3,5 @@ export interface Note {
   title: string;
   content: string;
   createdAt: Date;
-  updatedAt?: Date;
+  updatedAt: Date | null;
 }
