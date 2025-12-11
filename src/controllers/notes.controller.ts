@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-import { fetchAllNotes, createNote } from "../services/notes.service";
+import {
+  fetchAllNotes,
+  createNote,
+  updateNote,
+  deleteNote,
+} from "../services/notes.service";
 
 export const getNotes = async (req: Request, res: Response) => {
   try {
@@ -13,16 +18,44 @@ export const getNotes = async (req: Request, res: Response) => {
 export const postNote = async (req: Request, res: Response) => {
   try {
     const { title, content } = req.body;
-
-    if (!title || !content) {
+    if (!title || !content)
       return res
         .status(400)
         .json({ message: "title and content are required" });
-    }
 
     const note = await createNote(title, content);
     res.status(201).json(note);
   } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const putNote = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { title, content } = req.body;
+    if (!title || !content)
+      return res
+        .status(400)
+        .json({ message: "title and content are required" });
+
+    const note = await updateNote(id, title, content);
+    res.status(200).json(note);
+  } catch (error: any) {
+    if (error.code === "P2025")
+      return res.status(404).json({ message: "Note not found" });
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const removeNote = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const note = await deleteNote(id);
+    res.status(200).json(note);
+  } catch (error: any) {
+    if (error.code === "P2025")
+      return res.status(404).json({ message: "Note not found" });
     res.status(500).json({ message: "Internal server error" });
   }
 };
