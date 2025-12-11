@@ -1,22 +1,15 @@
+import { prisma } from "../db";
 import { Note } from "../models/note.model";
 
-let notes: Note[] = [];
-
 export const fetchAllNotes = async (): Promise<Note[]> => {
-  return notes;
+  return prisma.note.findMany();
 };
 
 export const createNote = async (
   title: string,
   content: string
 ): Promise<Note> => {
-  const newNote: Note = {
-    id: crypto.randomUUID(),
-    title,
-    content,
-    createdAt: new Date(),
-  };
-
-  notes.push(newNote);
-  return newNote;
+  return prisma.note.create({
+    data: { title, content },
+  });
 };
