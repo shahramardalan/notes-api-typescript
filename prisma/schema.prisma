@@ -12,6 +12,16 @@ model Note {
   id        String   @id @default(uuid())
   title     String
   content   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime?
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  notes     Note[]
+  createdAt DateTime @default(now())
 }

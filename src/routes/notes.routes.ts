@@ -1,24 +1,13 @@
-import { Router } from "express";
-import {
-  getNotes,
-  postNote,
-  putNote,
-  removeNote,
-} from "../controllers/notes.controller.js";
-import {
-  createNoteSchema,
-  updateNoteSchema,
-} from "../validators/note.validator.js";
-import { validateAndLog } from "../middleware/validateAndLog.middleware.js";
+import express from "express";
+import * as notesController from "../controllers/notes.controller";
+import { authMiddleware } from "../middleware/auth.middleware";
 
-const router = Router();
+const router = express.Router();
 
-router.get("/", validateAndLog(), getNotes); // فقط logging
-
-router.post("/", validateAndLog(createNoteSchema), postNote); // validation + logging
-
-router.put("/:id", validateAndLog(updateNoteSchema), putNote); // validation + logging
-
-router.delete("/:id", validateAndLog(), removeNote); // فقط logging
+router.get("/", authMiddleware, notesController.getNotes);
+router.get("/:id", authMiddleware, notesController.getNoteById);
+router.post("/", authMiddleware, notesController.createNote);
+router.put("/:id", authMiddleware, notesController.updateNote);
+router.delete("/:id", authMiddleware, notesController.deleteNote);
 
 export default router;
